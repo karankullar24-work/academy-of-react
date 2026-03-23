@@ -1,4 +1,212 @@
-# Exercise 5: Wizard Inventory
+# Exercise 5: Objects
+
+## Objects
+
+An **object** groups related data (and optionally behavior) under named **keys**. Instead of many separate variables, you use one value with properties like `wizard.name` or `wizard.power`. JSON-style data from APIs and React props are both object-shaped.
+
+### Object Literals
+
+An **object literal** is the `{ key: value, ... }` syntax: curly braces, comma-separated properties, keys are usually strings (written without quotes when they're simple identifiers). You read a property with dot notation or brackets.
+
+```js
+const wizard = {
+  name: "Merlin",
+  power: 100,
+  house: "Liondudes",
+  spells: ["Fireball", "Lightning"],
+};
+
+// Access properties
+wizard.name;          // "Merlin"
+wizard["power"];      // 100
+
+// Add / modify properties
+wizard.level = 50;
+wizard.power = 120;
+
+// Delete properties
+delete wizard.level;
+```
+
+### Shorthand Properties
+
+When the variable name matches the key:
+
+```js
+const name = "Merlin";
+const power = 100;
+
+// Long form
+const wizard = { name: name, power: power };
+
+// Shorthand
+const wizard = { name, power };
+```
+
+### Computed Property Names
+
+Sometimes the property name isn't known until runtime — it's stored in a variable. **Computed property names** use square brackets in the object literal (`[expression]`) so the key is whatever that expression evaluates to.
+
+```js
+const field = "house";
+const wizard = {
+  name: "Merlin",
+  [field]: "Liondudes",
+};
+// { name: "Merlin", house: "Liondudes" }
+```
+
+### Methods
+
+Functions as object properties:
+
+```js
+const wizard = {
+  name: "Merlin",
+  mana: 100,
+  castSpell(cost) {
+    this.mana -= cost;
+    return `${this.name} casts a spell! Mana: ${this.mana}`;
+  },
+};
+
+wizard.castSpell(30); // "Merlin casts a spell! Mana: 70"
+```
+
+### Destructuring
+
+Extract values from objects into variables — you'll use this everywhere in React:
+
+```js
+const wizard = {
+  name: "Merlin",
+  power: 100,
+  house: "Liondudes",
+};
+
+// Destructure specific properties
+const { name, power } = wizard;
+console.log(name);  // "Merlin"
+console.log(power); // 100
+
+// Rename during destructuring
+const { name: wizardName, house: wizardHouse } = wizard;
+
+// Default values
+const { level = 1 } = wizard; // level is 1 (not in wizard)
+
+// Nested destructuring
+const academy = {
+  name: "Wizard Academy",
+  location: { city: "London", country: "UK" },
+};
+const {
+  location: { city },
+} = academy;
+console.log(city); // "London"
+```
+
+### Array Destructuring
+
+**Array destructuring** pulls values out of an array by **position** — same idea as object destructuring, but order matters. The first variable matches index `0`, the second index `1`, and you can skip slots or use `...rest` to collect the remainder.
+
+```js
+const spells = ["Fireball", "Ice Shard", "Lightning"];
+
+const [first, second] = spells;
+// first = "Fireball", second = "Ice Shard"
+
+// Skip elements
+const [, , third] = spells;
+// third = "Lightning"
+
+// Rest element
+const [primary, ...rest] = spells;
+// primary = "Fireball", rest = ["Ice Shard", "Lightning"]
+
+// Swap variables
+let a = 1;
+let b = 2;
+[a, b] = [b, a];
+// a = 2, b = 1
+```
+
+### Spread Operator
+
+Copies elements from one object or array into another:
+
+```js
+// Spread arrays
+const basic = ["Fireball", "Heal"];
+const advanced = ["Lightning", "Teleport"];
+const allSpells = [...basic, ...advanced];
+// ["Fireball", "Heal", "Lightning", "Teleport"]
+
+// Add to array without mutating
+const withNewSpell = [...basic, "Shield"];
+
+// Spread objects
+const wizard = { name: "Merlin", power: 100 };
+const updated = { ...wizard, power: 150, level: 50 };
+// { name: "Merlin", power: 150, level: 50 }
+```
+
+This is how you update state in React — never mutate, always spread:
+
+```js
+// Updating an object
+const newWizard = { ...wizard, power: wizard.power + 10 };
+
+// Updating an array
+const newSpells = [...spells, "New Spell"];
+const withoutFirst = spells.filter((_, i) => i !== 0);
+```
+
+### Optional Chaining
+
+Safely access nested properties that might not exist:
+
+```js
+const wizard = {
+  name: "Merlin",
+  familiar: {
+    name: "Archimedes",
+    type: "owl",
+  },
+};
+
+// Without optional chaining — crashes if familiar is null
+wizard.familiar.name; // "Archimedes"
+
+// With optional chaining — returns undefined instead of crashing
+wizard.familiar?.name;   // "Archimedes"
+wizard.pet?.name;        // undefined (no crash)
+wizard.pet?.name ?? "No pet"; // "No pet"
+```
+
+### Useful Object Methods
+
+JavaScript provides **static helpers** on `Object` to inspect an object: list keys, list values, or get `[key, value]` pairs. They're handy when you need to loop or serialize data without hard-coding every property name.
+
+```js
+const wizard = { name: "Merlin", power: 100, house: "Liondudes" };
+
+// Get all keys
+Object.keys(wizard);   // ["name", "power", "house"]
+
+// Get all values
+Object.values(wizard);  // ["Merlin", 100, "Liondudes"]
+
+// Get key-value pairs
+Object.entries(wizard);
+// [["name", "Merlin"], ["power", 100], ["house", "Liondudes"]]
+
+// Check if key exists
+"name" in wizard;      // true
+wizard.hasOwnProperty("name"); // true
+```
+
+---
 
 ## Story
 

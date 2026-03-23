@@ -1,4 +1,119 @@
-# Exercise 4: Spell Crafting
+# Exercise 4: Functions
+
+## Functions
+
+A **function** is a reusable block of code with a name (or a variable holding it). You define it once, then **call** it whenever you need that behavior — with different inputs if you use parameters. Functions keep programs organized and are everywhere in React (components, event handlers, hooks).
+
+### Function Declarations
+
+A **function declaration** starts with the `function` keyword followed by a name and parentheses. It's the traditional way to define a callable piece of logic.
+
+```js
+function castSpell(spellName) {
+  return `${spellName} has been cast!`;
+}
+
+castSpell("Fireball"); // "Fireball has been cast!"
+```
+
+Declarations are **hoisted** — you can call them before they appear in the code.
+
+### Function Expressions
+
+A **function expression** creates a function value and usually assigns it to a variable (often with `const`). The function can be anonymous or named; either way, you're treating the function like any other value you store and pass around.
+
+```js
+const castSpell = function (spellName) {
+  return `${spellName} has been cast!`;
+};
+```
+
+Expressions are **not hoisted** — you must define them before calling.
+
+### Arrow Functions
+
+The concise syntax you'll use most in React:
+
+```js
+// Full form
+const castSpell = (spellName) => {
+  return `${spellName} has been cast!`;
+};
+
+// Implicit return (single expression)
+const castSpell = (spellName) => `${spellName} has been cast!`;
+
+// Single parameter — parentheses optional
+const double = (n) => n * 2;
+
+// No parameters
+const roll = () => Math.floor(Math.random() * 6) + 1;
+
+// Returning an object (wrap in parentheses)
+const createWizard = (name) => ({ name, power: 100 });
+```
+
+### Parameters
+
+**Parameters** are the named slots in a function's definition; **arguments** are the actual values you pass when you call it. You can give parameters default values so callers can omit them, and use **rest** (`...`) to gather any extra arguments into an array.
+
+```js
+// Default values
+function greet(name = "stranger") {
+  return `Hello, ${name}!`;
+}
+greet();        // "Hello, stranger!"
+greet("Merlin"); // "Hello, Merlin!"
+
+// Rest parameters (gather remaining args into an array)
+function sumAll(...numbers) {
+  return numbers.reduce((sum, n) => sum + n, 0);
+}
+sumAll(1, 2, 3, 4); // 10
+```
+
+### Callbacks
+
+A function passed as an argument to another function:
+
+```js
+function repeatAction(times, action) {
+  for (let i = 0; i < times; i++) {
+    action(i);
+  }
+}
+
+repeatAction(3, (i) => console.log(`Round ${i + 1}`));
+// Round 1
+// Round 2
+// Round 3
+```
+
+You already saw callbacks with `map`, `filter`, `forEach`, and `reduce`.
+
+### Closures
+
+A function that remembers variables from its outer scope:
+
+```js
+function createCounter(start = 0) {
+  let count = start;
+  return {
+    increment: () => ++count,
+    decrement: () => --count,
+    getCount: () => count,
+  };
+}
+
+const counter = createCounter(10);
+counter.increment(); // 11
+counter.increment(); // 12
+counter.getCount();  // 12
+```
+
+The inner functions "close over" the `count` variable — they remember it even after `createCounter` has finished running. This concept is fundamental to how React hooks work.
+
+---
 
 ## Story
 
