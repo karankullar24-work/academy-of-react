@@ -52,6 +52,7 @@ The slides cover:
 - **npm** — installing dependencies and running scripts (`package.json`)
 - **pnpm** — an alternative package manager (same commands, often faster)
 - Introduction to Vite
+- Creating a new project (`npm create vite@latest`) — full optional steps under **Setup Instructions** below
 - Module 2 goals
 
 ## Node.js, npm, and pnpm
@@ -145,13 +146,35 @@ Vite (French for "fast") is a modern build tool created by Evan You (creator of 
    - Click it or copy/paste into your browser
    - You should see the demo running!
 
-4. **Make changes:**
+5. **Make changes:**
    - Edit files in the `src/` folder
    - Save your changes
    - Watch the browser update instantly!
 
-5. **Stop the server:**
+6. **Stop the server:**
    - Press `Ctrl+C` in the terminal when you're done
+
+### Optional: Create your own Vite + React app
+
+For this module you can stay in the **`demo/`** folder above. If you want a **fresh project** elsewhere on your machine (same tooling as the course):
+
+1. **Scaffold** (pick a folder name instead of `my-app`):
+
+   ```bash
+   npm create vite@latest my-app
+   ```
+
+2. **In the prompts**, choose **React**, then **JavaScript** or **TypeScript**.
+
+3. **Install and run:**
+
+   ```bash
+   cd my-app
+   npm install
+   npm run dev
+   ```
+
+With **pnpm**: `pnpm create vite` (or `pnpm create vite my-app`), then `cd` into the folder, `pnpm install`, and `pnpm dev`.
 
 ### Vite Project Structure
 
