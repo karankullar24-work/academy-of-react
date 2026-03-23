@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercise 1: Wizard Character Sheet</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        min-height: 100vh;
+        background: #222740;
+        padding: 40px 20px;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+      .container {
+        max-width: 700px;
+        margin: 0 auto;
+        background: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+      h1 { color: #222740; margin-bottom: 8px; }
+      .subtitle { color: #6b7280; margin-bottom: 24px; }
+      .output {
+        background: #1e293b;
+        color: #e2e8f0;
+        padding: 20px;
+        border-radius: 8px;
+        font-family: "Courier New", monospace;
+        font-size: 0.95rem;
+        line-height: 1.8;
+        min-height: 120px;
+        white-space: pre-wrap;
+      }
+      .output .label { color: #94a3b8; }
+      .output .value { color: #67e8f9; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Wizard Character Sheet</h1>
+      <p class="subtitle">Variables, data types & template literals</p>
+      <div id="output" class="output"></div>
+    </div>
+
+    <script>
+      function log(text) {
+        document.getElementById("output").textContent += text + "\n";
+      }
+
+      // ============================================
+      // STEP 1: Declare your wizard's stats
+      // Use const for values that won't be reassigned
+      // Use let for values that will change
+      // ============================================
+
+      // TODO: name (string)
+      // TODO: health (number, starts at 100)
+      // TODO: mana (number, starts at 50)
+      // TODO: spells (array of at least 3 spell names)
+      // TODO: inCombat (boolean, starts false)
+
+      // ============================================
+      // STEP 2: Log the starting stats
+      // ============================================
+
+      log("=== Starting Stats ===");
+      // TODO: Log each stat, e.g. log(`Name: ${name}`)
+
+      // ============================================
+      // STEP 3: Simulate a battle round
+      // ============================================
+
+      log("\n=== Battle Round ===");
+      // TODO: Take 25 damage
+      // TODO: Cast a spell for 15 mana
+      // TODO: Learn a new spell (add to array)
+      // TODO: Enter combat
+
+      // ============================================
+      // STEP 4: Log the updated stats with a summary
+      // ============================================
+
+      log("\n=== Updated Stats ===");
+      // TODO: Log a template literal summary, e.g.:
+      // "Merlin — HP: 75 / Mana: 35 — Spells: Fireball, Heal, Shield, Barrier — In Combat: true"
+    </script>
+  </body>
+</html>

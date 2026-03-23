@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercise 5: Wizard Inventory</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        min-height: 100vh;
+        background: #222740;
+        padding: 40px 20px;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+      .container {
+        max-width: 700px;
+        margin: 0 auto;
+        background: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+      h1 { color: #222740; margin-bottom: 8px; }
+      .subtitle { color: #6b7280; margin-bottom: 24px; }
+      .output {
+        background: #1e293b;
+        color: #e2e8f0;
+        padding: 20px;
+        border-radius: 8px;
+        font-family: "Courier New", monospace;
+        font-size: 0.95rem;
+        line-height: 1.8;
+        min-height: 120px;
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Wizard Inventory</h1>
+      <p class="subtitle">Destructuring, spread & immutable updates</p>
+      <div id="output" class="output"></div>
+    </div>
+
+    <script>
+      function log(text) {
+        document.getElementById("output").textContent += text + "\n";
+      }
+
+      const wizard = {
+        name: "Merlin",
+        stats: { power: 100, defense: 50 },
+        spells: ["Fireball", "Heal"],
+        equipment: {
+          weapon: "Staff of Ages",
+          armor: "Enchanted Robes",
+        },
+      };
+
+      log("=== Original Wizard ===");
+      log(JSON.stringify(wizard, null, 2));
+
+      // ============================================
+      // TASK 1: Increase power to 120
+      // Create wizard2 using spread (nested update)
+      // ============================================
+
+      // TODO: const wizard2 = { ...wizard, stats: ... }
+
+      log("\n=== Task 1: Power → 120 ===");
+      // log(`wizard2 power: ${wizard2.stats.power}`);
+      // log(`original power still: ${wizard.stats.power}`);
+
+      // ============================================
+      // TASK 2: Add "Shield" to spells
+      // Create wizard3 using spread
+      // ============================================
+
+      // TODO: const wizard3 = ...
+
+      log("\n=== Task 2: Add Shield ===");
+      // log(`wizard3 spells: ${wizard3.spells.join(", ")}`);
+      // log(`original spells still: ${wizard.spells.join(", ")}`);
+
+      // ============================================
+      // TASK 3: Change weapon to "Elder Wand"
+      // Create wizard4 using spread (nested update)
+      // ============================================
+
+      // TODO: const wizard4 = ...
+
+      log("\n=== Task 3: Elder Wand ===");
+      // log(`wizard4 weapon: ${wizard4.equipment.weapon}`);
+      // log(`original weapon still: ${wizard.equipment.weapon}`);
+
+      // ============================================
+      // TASK 4: Remove "Fireball" from spells
+      // Create wizard5 using spread + filter
+      // ============================================
+
+      // TODO: const wizard5 = ...
+
+      log("\n=== Task 4: Remove Fireball ===");
+      // log(`wizard5 spells: ${wizard5.spells.join(", ")}`);
+      // log(`original spells still: ${wizard.spells.join(", ")}`);
+
+      // ============================================
+      // TASK 5: Destructure the wizard
+      // Extract: name, power (from stats), primarySpell (first spell)
+      // ============================================
+
+      // TODO: destructure name from wizard
+      // TODO: destructure power from wizard.stats
+      // TODO: destructure primarySpell from wizard.spells
+
+      log("\n=== Task 5: Destructuring ===");
+      // log(`name: ${name}`);
+      // log(`power: ${power}`);
+      // log(`primarySpell: ${primarySpell}`);
+    </script>
+  </body>
+</html>

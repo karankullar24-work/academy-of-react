@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercise 3: Roster Analysis</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        min-height: 100vh;
+        background: #222740;
+        padding: 40px 20px;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+      .container {
+        max-width: 700px;
+        margin: 0 auto;
+        background: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+      h1 { color: #222740; margin-bottom: 8px; }
+      .subtitle { color: #6b7280; margin-bottom: 24px; }
+      .output {
+        background: #1e293b;
+        color: #e2e8f0;
+        padding: 20px;
+        border-radius: 8px;
+        font-family: "Courier New", monospace;
+        font-size: 0.95rem;
+        line-height: 1.8;
+        min-height: 120px;
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Roster Analysis</h1>
+      <p class="subtitle">Array methods: map, filter, find, reduce</p>
+      <div id="output" class="output"></div>
+    </div>
+
+    <script>
+      function log(text) {
+        document.getElementById("output").textContent += text + "\n";
+      }
+
+      const roster = [
+        { name: "Merlin", power: 100, house: "Liondudes" },
+        { name: "Morgana", power: 90, house: "Serpent" },
+        { name: "Ron", power: 30, house: "Liondudes" },
+        { name: "Luna", power: 75, house: "Raven" },
+        { name: "Draco", power: 60, house: "Serpent" },
+        { name: "Neville", power: 40, house: "Badger" },
+      ];
+
+      // ============================================
+      // TASK 1: Get an array of just the names
+      // Use: map
+      // ============================================
+
+      // TODO
+      log("=== Task 1: Names ===");
+      // log(names.join(", "));
+
+      // ============================================
+      // TASK 2: Find all wizards with power above 50
+      // Use: filter
+      // ============================================
+
+      // TODO
+      log("\n=== Task 2: Powerful Wizards (power > 50) ===");
+      // powerful.forEach(w => log(`  ${w.name} (${w.power})`));
+
+      // ============================================
+      // TASK 3: Find the wizard named "Luna"
+      // Use: find
+      // ============================================
+
+      // TODO
+      log("\n=== Task 3: Find Luna ===");
+      // log(`  ${luna.name}, power: ${luna.power}, house: ${luna.house}`);
+
+      // ============================================
+      // TASK 4: Get the total power of all wizards
+      // Use: reduce
+      // ============================================
+
+      // TODO
+      log("\n=== Task 4: Total Power ===");
+      // log(`  ${totalPower}`);
+
+      // ============================================
+      // TASK 5: Group wizards by house
+      // Use: reduce with an object accumulator
+      // ============================================
+
+      // TODO
+      log("\n=== Task 5: Grouped by House ===");
+      // for (const house in grouped) {
+      //   const names = grouped[house].map(w => w.name).join(", ");
+      //   log(`  ${house}: ${names}`);
+      // }
+
+      // ============================================
+      // TASK 6: Liondudes names, sorted alphabetically
+      // Use: filter + map + sort (chained)
+      // ============================================
+
+      // TODO
+      log("\n=== Task 6: Liondudes (sorted) ===");
+      // log(`  ${liondudesNames.join(", ")}`);
+    </script>
+  </body>
+</html>

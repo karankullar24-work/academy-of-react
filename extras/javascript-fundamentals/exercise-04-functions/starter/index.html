@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercise 4: Spell Crafting</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        min-height: 100vh;
+        background: #222740;
+        padding: 40px 20px;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+      .container {
+        max-width: 700px;
+        margin: 0 auto;
+        background: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+      h1 { color: #222740; margin-bottom: 8px; }
+      .subtitle { color: #6b7280; margin-bottom: 24px; }
+      .output {
+        background: #1e293b;
+        color: #e2e8f0;
+        padding: 20px;
+        border-radius: 8px;
+        font-family: "Courier New", monospace;
+        font-size: 0.95rem;
+        line-height: 1.8;
+        min-height: 120px;
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Spell Crafting</h1>
+      <p class="subtitle">Arrow functions, defaults, callbacks & closures</p>
+      <div id="output" class="output"></div>
+    </div>
+
+    <script>
+      function log(text) {
+        document.getElementById("output").textContent += text + "\n";
+      }
+
+      // ============================================
+      // PART A: Arrow Functions & Defaults
+      //
+      // Write createSpell(name, damage, element)
+      // - Returns { name, damage, element }
+      // - damage defaults to 10
+      // - element defaults to "arcane"
+      // ============================================
+
+      // TODO: const createSpell = ...
+
+      log("=== Part A: Create Spells ===\n");
+      // TODO: Create and log these spells:
+      //   createSpell("Fireball", 50, "fire")
+      //   createSpell("Spark")
+      //   createSpell("Ice Lance", 35)
+      // Use JSON.stringify(spell, null, 2) to log them nicely
+
+      // ============================================
+      // PART B: Your Own Map
+      //
+      // Write applyToAll(arr, fn) that returns a new array
+      // with fn applied to each element.
+      // Do NOT use .map() inside — use a for loop.
+      // ============================================
+
+      // TODO: function applyToAll(arr, fn) { ... }
+
+      log("\n=== Part B: applyToAll ===\n");
+      // TODO: Use applyToAll to:
+      //   Double every number in [2, 5, 10]
+      //   Uppercase every string in ["fireball", "heal", "shield"]
+      // log(`Doubled: ${doubled}`);
+      // log(`Uppercased: ${uppercased}`);
+
+      // ============================================
+      // PART C: Closures
+      //
+      // Write createManaPool(startingMana) that returns:
+      //   { cast(cost), remaining() }
+      // cast deducts mana and returns true/false
+      // remaining returns current mana
+      // ============================================
+
+      // TODO: function createManaPool(startingMana) { ... }
+
+      log("\n=== Part C: Mana Pool ===\n");
+      // TODO: Create pool with 50 mana
+      // TODO: Cast 3 spells costing 20 each, log the result of each
+      // Example output:
+      //   Cast for 20: true (remaining: 30)
+      //   Cast for 20: true (remaining: 10)
+      //   Cast for 20: false (remaining: 10)
+    </script>
+  </body>
+</html>
