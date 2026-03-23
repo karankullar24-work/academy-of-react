@@ -4,6 +4,12 @@ Supplementary modules that are **not part of the main course flow**. Complete th
 
 ## Available Extras
 
+### [JavaScript Fundamentals](./javascript-fundamentals/)
+
+Brush up on core JavaScript: variables, conditionals, loops, functions, objects, destructuring, and spread. Covers everything you need to feel confident before writing React.
+
+**Best before**: Module 1 (React Elements) — as a warm-up, or use as a reference anytime
+
 ### [TypeScript](./typescript/)
 
 Master TypeScript fundamentals and React-specific patterns. Covers types, interfaces, generics, hooks typing, events, and common patterns.
