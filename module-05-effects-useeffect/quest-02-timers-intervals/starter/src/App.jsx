@@ -6,12 +6,18 @@ function App() {
   // TODO: State for seconds remaining
   // TODO: State for isRunning
 
+  const [minutes, setMinutes] = useState(0);
+  const [secondsRemaining, setsecondsRemaining] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+
+
   // TODO: useEffect to handle countdown
   // - Only run when isRunning is true
   // - Decrement seconds every 1000ms
   // - Alert when reaches 0
   // - IMPORTANT: Cleanup interval!
 
+  useEffect()
   // TODO: Functions to start, stop, reset timer
 
   return (

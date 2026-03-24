@@ -24,9 +24,22 @@ const wizard = {
 
 function App() {
   return (
-    // Your JSX code here
-    <div>
-      <p>Convert the Module 1 wizard card to JSX!</p>
+    <div className="wizard-card">
+      <h1 className="wizard-name">{wizard.name}</h1>
+      <div className="wizard-info">
+        <p>
+          <strong>House: </strong>
+          {wizard.house}
+        </p>
+        <p>
+          <strong>Level: </strong>
+          {wizard.level}
+        </p>
+        <p>
+          <strong>Specialty: </strong>
+          {wizard.specialty}
+        </p>
+      </div>
     </div>
   );
 }

@@ -131,7 +131,7 @@ export function PotionBrewing() {
           <button className="complete-step-btn" onClick={completeStep}>
             Complete Step
           </button>
-          <button className="skip-step-btn" onClick={skipStep}>
+          <button className="skip-btn" onClick={skipStep}>
             Skip Step (-15% success)
           </button>
         </div>

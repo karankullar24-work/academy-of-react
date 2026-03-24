@@ -25,6 +25,36 @@ function App() {
   //
   // Or use async/await inside the effect
 
+  useEffect(() => {
+    fetch("/api/intelligence.json")
+      .then((response) => response.json())
+      .then((data) => {
+        setIntel(data.reports);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error);
+        setLoading(false);
+      });
+  }, []);
+
+  const handleRefresh = () => {
+    setLoading(true);
+    setError(null);
+
+    fetch("/api/intelligence.json")
+      .then((response) => response.json())
+      .then((data) => {
+        setIntel(data.reports);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error);
+        setLoading(false);
+      });
+
+  }
+
   // Loading state
   if (loading) {
     return (
@@ -57,7 +87,7 @@ function App() {
       <h1>War Intelligence</h1>
       <p>Latest reports on rival academies</p>
 
-      <button className="refresh-btn">Refresh Intelligence</button>
+      <button onClick={handleRefresh} className="refresh-btn">Refresh Intelligence</button>
 
       <div className="intel-grid">
         {intel.map((report) => (

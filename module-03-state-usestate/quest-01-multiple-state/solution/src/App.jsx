@@ -41,15 +41,15 @@ function StatTrainer({ label, value, onTrain, color }) {
 
 function TrainingSystem() {
   // State for each stat
-  const [strength, setStrength] = useState(50);
-  const [intelligence, setIntelligence] = useState(50);
-  const [dexterity, setDexterity] = useState(50);
-  const [stamina, setStamina] = useState(50);
+  const [strength, setStrength] = useState(40);
+  const [intelligence, setIntelligence] = useState(40);
+  const [dexterity, setDexterity] = useState(40);
+  const [stamina, setStamina] = useState(40);
   const [level, setLevel] = useState(1);
 
   // Calculate total power
   const totalPower = strength + intelligence + dexterity + stamina;
-  const nextLevelXP = level * 100;
+  const nextLevelXP = (level + 1) * 100;
   const currentXP = totalPower;
   const progress = Math.min((currentXP / nextLevelXP) * 100, 100);
 
@@ -60,7 +60,7 @@ function TrainingSystem() {
 
       // Check for level up
       const newTotal = totalPower + 5;
-      const requiredForLevel = level * 100;
+      const requiredForLevel = (level+1) * 100;
       if (newTotal >= requiredForLevel) {
         setLevel(level + 1);
       }
@@ -69,10 +69,10 @@ function TrainingSystem() {
 
   // Reset function (bonus)
   function reset() {
-    setStrength(50);
-    setIntelligence(50);
-    setDexterity(50);
-    setStamina(50);
+    setStrength(40);
+    setIntelligence(40);
+    setDexterity(40);
+    setStamina(40);
     setLevel(1);
   }
 
