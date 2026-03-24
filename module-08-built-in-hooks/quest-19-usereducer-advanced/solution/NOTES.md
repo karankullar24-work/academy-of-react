@@ -1,98 +1,97 @@
-# Quest 4 Solution: Spell Inventory with useReducer
+# Quest 19 Solution: Spell Inventory with useReducer (Advanced)
 
-## Key Concepts Demonstrated
+## Overview
 
-### 1. Reducer Function
+A full spell inventory system with add, remove, upgrade, and favorite actions — all managed through a single reducer. Demonstrates how `useReducer` scales to handle complex state with many action types.
 
-A reducer is a pure function that takes the current state and an action, and returns the new state:
+## Key Concepts
+
+### 1. Multi-Action Reducer
 
 ```javascript
 function spellReducer(state, action) {
   switch (action.type) {
     case "ADD_SPELL":
       return { ...state, spells: [...state.spells, action.spell] };
-    // ... other cases
+    case "REMOVE_SPELL":
+      return { ...state, spells: state.spells.filter((s) => s.id !== action.id) };
+    case "UPGRADE_SPELL":
+      return {
+        ...state,
+        spells: state.spells.map((s) =>
+          s.id === action.id ? { ...s, power: s.power + 10 } : s
+        ),
+      };
+    case "TOGGLE_FAVORITE":
+      return {
+        ...state,
+        spells: state.spells.map((s) =>
+          s.id === action.id ? { ...s, isFavorite: !s.isFavorite } : s
+        ),
+      };
     default:
       return state;
   }
 }
 ```
 
-**Rules for reducers:**
+Four distinct actions, all handled in one place. Adding a fifth (e.g., `RESET`) is just another `case`.
 
-- Must be pure (no side effects)
-- Must return new state object (don't mutate!)
-- Should handle unknown actions by returning current state
-
-### 2. Dispatching Actions
-
-Instead of calling setters directly, dispatch action objects:
+### 2. Derived State
 
 ```javascript
-// With useState
-setSpells(spells.filter((s) => s.id !== id));
-
-// With useReducer
-dispatch({ type: "REMOVE_SPELL", id });
+const totalPower = state.spells.reduce((sum, s) => sum + s.power, 0);
+const favoriteCount = state.spells.filter((s) => s.isFavorite).length;
 ```
 
-Actions describe **what happened**, not how to update the state.
+Compute values from state rather than storing them separately. This avoids synchronization bugs.
 
-### 3. Immutable Updates
+### 3. Immutable Update Patterns
 
-Always return new objects/arrays:
+**Adding to an array:**
+```javascript
+[...state.spells, newSpell]
+```
+
+**Removing from an array:**
+```javascript
+state.spells.filter((s) => s.id !== action.id)
+```
+
+**Updating one item:**
+```javascript
+state.spells.map((s) =>
+  s.id === action.id ? { ...s, power: s.power + 10 } : s
+)
+```
+
+**Toggling a boolean:**
+```javascript
+state.spells.map((s) =>
+  s.id === action.id ? { ...s, isFavorite: !s.isFavorite } : s
+)
+```
+
+### 4. Mixing useReducer with useState
 
 ```javascript
-// Update one item in array
-case 'UPGRADE_SPELL':
-  return {
-    ...state,
-    spells: state.spells.map(spell =>
-      spell.id === action.id
-        ? { ...spell, power: spell.power + 10 }  // New object
-        : spell
-    )
-  }
+const [state, dispatch] = useReducer(spellReducer, { spells: initialSpells });
+const [newSpellName, setNewSpellName] = useState("");
 ```
 
-## When to Use useReducer
+The spell name input is local UI state — it doesn't belong in the reducer. Use `useState` for ephemeral form values and `useReducer` for the domain data.
 
-| useState                      | useReducer                      |
-| ----------------------------- | ------------------------------- |
-| Simple state (number, string) | Complex state (objects, arrays) |
-| 1-2 update patterns           | Many action types               |
-| Quick prototyping             | Predictable, testable updates   |
-| Independent values            | Related state values            |
+## Benefits at Scale
 
-## Benefits of useReducer
+1. **Centralized logic** — all state transitions in one function
+2. **Testable** — pass state + action, assert on output (no React needed)
+3. **Predictable** — same input always produces same output
+4. **Easy to extend** — add new action types without touching existing ones
 
-1. **Centralized logic** — All state updates in one place
-2. **Predictable** — Same action always produces same result
-3. **Testable** — Easy to unit test reducers
-4. **Scalable** — Easy to add new action types
-5. **DevTools** — Works with Redux DevTools (with middleware)
+## Testing
 
-## Common Patterns
-
-### Adding to an array
-
-```javascript
-return { ...state, items: [...state.items, newItem] };
-```
-
-### Removing from an array
-
-```javascript
-return { ...state, items: state.items.filter((i) => i.id !== action.id) };
-```
-
-### Updating an item in an array
-
-```javascript
-return {
-  ...state,
-  items: state.items.map((item) =>
-    item.id === action.id ? { ...item, ...updates } : item,
-  ),
-};
-```
+1. Add a spell — appears in the list with power 20
+2. Click "Upgrade +10" — power increases
+3. Click "Favorite" / "Unfavorite" — star toggles
+4. Click "Remove" — spell disappears
+5. Stats (total spells, total power, favorites) update after every action

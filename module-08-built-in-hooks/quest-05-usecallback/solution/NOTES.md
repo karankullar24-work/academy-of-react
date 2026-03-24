@@ -1,98 +1,57 @@
-# Quest 4 Solution: Spell Inventory with useReducer
+# Quest 5 Solution: Spell Caster with useCallback
 
-## Key Concepts Demonstrated
+## Overview
 
-### 1. Reducer Function
+A parent component passes a callback to a memoized child. Without `useCallback`, the child would re-render every time the parent renders because the function reference changes. Demonstrates `useCallback` paired with `React.memo`.
 
-A reducer is a pure function that takes the current state and an action, and returns the new state:
+## Key Concepts
 
-```javascript
-function spellReducer(state, action) {
-  switch (action.type) {
-    case "ADD_SPELL":
-      return { ...state, spells: [...state.spells, action.spell] };
-    // ... other cases
-    default:
-      return state;
-  }
-}
-```
+### 1. The Problem: Unstable References
 
-**Rules for reducers:**
-
-- Must be pure (no side effects)
-- Must return new state object (don't mutate!)
-- Should handle unknown actions by returning current state
-
-### 2. Dispatching Actions
-
-Instead of calling setters directly, dispatch action objects:
+Every render creates a new function object. Even if the logic is identical, `===` returns false:
 
 ```javascript
-// With useState
-setSpells(spells.filter((s) => s.id !== id));
-
-// With useReducer
-dispatch({ type: "REMOVE_SPELL", id });
+// Without useCallback — new function every render
+const handleCast = () => { setCount(c => c + 1); };
 ```
 
-Actions describe **what happened**, not how to update the state.
+If the child is wrapped in `React.memo`, it compares props by reference. A new function reference defeats the memo.
 
-### 3. Immutable Updates
-
-Always return new objects/arrays:
+### 2. Memoizing with useCallback
 
 ```javascript
-// Update one item in array
-case 'UPGRADE_SPELL':
-  return {
-    ...state,
-    spells: state.spells.map(spell =>
-      spell.id === action.id
-        ? { ...spell, power: spell.power + 10 }  // New object
-        : spell
-    )
-  }
+const castFireball = useCallback(() => {
+  setCount((c) => c + 1);
+}, []);
 ```
 
-## When to Use useReducer
+`useCallback` returns the same function reference as long as the dependencies haven't changed. With `[]`, it's stable forever.
 
-| useState                      | useReducer                      |
-| ----------------------------- | ------------------------------- |
-| Simple state (number, string) | Complex state (objects, arrays) |
-| 1-2 update patterns           | Many action types               |
-| Quick prototyping             | Predictable, testable updates   |
-| Independent values            | Related state values            |
-
-## Benefits of useReducer
-
-1. **Centralized logic** — All state updates in one place
-2. **Predictable** — Same action always produces same result
-3. **Testable** — Easy to unit test reducers
-4. **Scalable** — Easy to add new action types
-5. **DevTools** — Works with Redux DevTools (with middleware)
-
-## Common Patterns
-
-### Adding to an array
+### 3. React.memo on the Child
 
 ```javascript
-return { ...state, items: [...state.items, newItem] };
+const SpellButton = memo(function SpellButton({ onCast, spellName }) {
+  console.log(`SpellButton "${spellName}" rendered`);
+  return <button onClick={onCast}>Cast {spellName}</button>;
+});
 ```
 
-### Removing from an array
+`memo` skips re-rendering if props are the same by reference. Combined with a stable callback, the child stays still when unrelated parent state changes.
+
+### 4. Functional setState to Avoid Dependencies
 
 ```javascript
-return { ...state, items: state.items.filter((i) => i.id !== action.id) };
+setCount((c) => c + 1);  // No need to list `count` as a dependency
 ```
 
-### Updating an item in an array
+Using the updater form means the callback doesn't close over `count`, so the dependency array can stay empty.
 
-```javascript
-return {
-  ...state,
-  items: state.items.map((item) =>
-    item.id === action.id ? { ...item, ...updates } : item,
-  ),
-};
-```
+## Testing
+
+1. Click "Update Other State" — check console, SpellButton should **not** log
+2. Click "Cast Fireball" — spell count increments, SpellButton logs once
+3. Remove `useCallback` — SpellButton logs on every parent render
+
+## What's Next
+
+Quest 6 introduces `useMemo` for memoizing expensive computed values.

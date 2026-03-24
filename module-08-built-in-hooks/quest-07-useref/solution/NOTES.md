@@ -1,98 +1,57 @@
-# Quest 4 Solution: Spell Inventory with useReducer
+# Quest 7 Solution: Spell Input Focus with useRef
 
-## Key Concepts Demonstrated
+## Overview
 
-### 1. Reducer Function
+A text input with "Focus" and "Select All" buttons that imperatively control the DOM element. Demonstrates `useRef` for holding a reference to a DOM node.
 
-A reducer is a pure function that takes the current state and an action, and returns the new state:
+## Key Concepts
+
+### 1. Creating a Ref
 
 ```javascript
-function spellReducer(state, action) {
-  switch (action.type) {
-    case "ADD_SPELL":
-      return { ...state, spells: [...state.spells, action.spell] };
-    // ... other cases
-    default:
-      return state;
-  }
-}
+const inputRef = useRef(null);
 ```
 
-**Rules for reducers:**
+`useRef` returns an object with a `.current` property. It's initialized to `null` and gets assigned to the DOM element after mount.
 
-- Must be pure (no side effects)
-- Must return new state object (don't mutate!)
-- Should handle unknown actions by returning current state
+### 2. Attaching to the DOM
 
-### 2. Dispatching Actions
-
-Instead of calling setters directly, dispatch action objects:
-
-```javascript
-// With useState
-setSpells(spells.filter((s) => s.id !== id));
-
-// With useReducer
-dispatch({ type: "REMOVE_SPELL", id });
+```jsx
+<input ref={inputRef} type="text" placeholder="Enter spell name..." />
 ```
 
-Actions describe **what happened**, not how to update the state.
+React sets `inputRef.current` to the actual `<input>` DOM node after rendering.
 
-### 3. Immutable Updates
-
-Always return new objects/arrays:
+### 3. Imperative DOM Methods
 
 ```javascript
-// Update one item in array
-case 'UPGRADE_SPELL':
-  return {
-    ...state,
-    spells: state.spells.map(spell =>
-      spell.id === action.id
-        ? { ...spell, power: spell.power + 10 }  // New object
-        : spell
-    )
-  }
-```
+const focusInput = () => {
+  inputRef.current.focus();
+};
 
-## When to Use useReducer
-
-| useState                      | useReducer                      |
-| ----------------------------- | ------------------------------- |
-| Simple state (number, string) | Complex state (objects, arrays) |
-| 1-2 update patterns           | Many action types               |
-| Quick prototyping             | Predictable, testable updates   |
-| Independent values            | Related state values            |
-
-## Benefits of useReducer
-
-1. **Centralized logic** — All state updates in one place
-2. **Predictable** — Same action always produces same result
-3. **Testable** — Easy to unit test reducers
-4. **Scalable** — Easy to add new action types
-5. **DevTools** — Works with Redux DevTools (with middleware)
-
-## Common Patterns
-
-### Adding to an array
-
-```javascript
-return { ...state, items: [...state.items, newItem] };
-```
-
-### Removing from an array
-
-```javascript
-return { ...state, items: state.items.filter((i) => i.id !== action.id) };
-```
-
-### Updating an item in an array
-
-```javascript
-return {
-  ...state,
-  items: state.items.map((item) =>
-    item.id === action.id ? { ...item, ...updates } : item,
-  ),
+const selectAll = () => {
+  inputRef.current.select();
 };
 ```
+
+Refs give you direct access to DOM APIs like `.focus()`, `.select()`, `.scrollIntoView()`, etc. — things you can't do declaratively through props.
+
+### 4. Refs Don't Trigger Re-renders
+
+Changing `ref.current` does **not** cause a re-render. This is the key difference from state:
+
+| `useState`                        | `useRef`                          |
+| --------------------------------- | --------------------------------- |
+| Triggers re-render on update      | No re-render on update            |
+| For data that affects the UI      | For DOM access or mutable values  |
+| Value captured per render         | `.current` is always latest       |
+
+## Testing
+
+1. Click "Focus Input" — input gains focus
+2. Type some text, click "Select All" — text is selected
+3. No re-renders from ref operations (no flashing)
+
+## What's Next
+
+Quest 8 introduces `useImperativeHandle` for customizing what a parent can do with a child's ref.

@@ -1,98 +1,62 @@
-# Quest 4 Solution: Spell Inventory with useReducer
+# Quest 8 Solution: Custom Spell Input with useImperativeHandle
 
-## Key Concepts Demonstrated
+## Overview
 
-### 1. Reducer Function
+A `SpellInput` component exposes only `focus()`, `clear()`, and `getValue()` to the parent — hiding internal implementation details. Demonstrates `useImperativeHandle` with `forwardRef`.
 
-A reducer is a pure function that takes the current state and an action, and returns the new state:
+## Key Concepts
 
-```javascript
-function spellReducer(state, action) {
-  switch (action.type) {
-    case "ADD_SPELL":
-      return { ...state, spells: [...state.spells, action.spell] };
-    // ... other cases
-    default:
-      return state;
-  }
-}
-```
-
-**Rules for reducers:**
-
-- Must be pure (no side effects)
-- Must return new state object (don't mutate!)
-- Should handle unknown actions by returning current state
-
-### 2. Dispatching Actions
-
-Instead of calling setters directly, dispatch action objects:
+### 1. forwardRef
 
 ```javascript
-// With useState
-setSpells(spells.filter((s) => s.id !== id));
-
-// With useReducer
-dispatch({ type: "REMOVE_SPELL", id });
+const SpellInput = forwardRef((props, ref) => {
+  const inputRef = useRef(null);
+  // ...
+});
 ```
 
-Actions describe **what happened**, not how to update the state.
+`forwardRef` lets the parent pass a `ref` into a child component. Without it, the `ref` prop is not forwarded.
 
-### 3. Immutable Updates
-
-Always return new objects/arrays:
+### 2. Customizing the Ref API
 
 ```javascript
-// Update one item in array
-case 'UPGRADE_SPELL':
-  return {
-    ...state,
-    spells: state.spells.map(spell =>
-      spell.id === action.id
-        ? { ...spell, power: spell.power + 10 }  // New object
-        : spell
-    )
-  }
+useImperativeHandle(ref, () => ({
+  focus: () => inputRef.current.focus(),
+  clear: () => { inputRef.current.value = ""; },
+  getValue: () => inputRef.current.value,
+}));
 ```
 
-## When to Use useReducer
+Instead of exposing the raw DOM node, you define a custom API. The parent can only call the methods you choose to expose.
 
-| useState                      | useReducer                      |
-| ----------------------------- | ------------------------------- |
-| Simple state (number, string) | Complex state (objects, arrays) |
-| 1-2 update patterns           | Many action types               |
-| Quick prototyping             | Predictable, testable updates   |
-| Independent values            | Related state values            |
-
-## Benefits of useReducer
-
-1. **Centralized logic** — All state updates in one place
-2. **Predictable** — Same action always produces same result
-3. **Testable** — Easy to unit test reducers
-4. **Scalable** — Easy to add new action types
-5. **DevTools** — Works with Redux DevTools (with middleware)
-
-## Common Patterns
-
-### Adding to an array
+### 3. Parent Usage
 
 ```javascript
-return { ...state, items: [...state.items, newItem] };
+const spellInputRef = useRef(null);
+
+spellInputRef.current.focus();
+spellInputRef.current.clear();
+const value = spellInputRef.current.getValue();
 ```
 
-### Removing from an array
+The parent interacts with the child through a clean, controlled interface.
 
-```javascript
-return { ...state, items: state.items.filter((i) => i.id !== action.id) };
-```
+### 4. Encapsulation
 
-### Updating an item in an array
+The parent never touches the real `<input>` element. The child could swap its internal DOM structure without breaking the parent's code.
 
-```javascript
-return {
-  ...state,
-  items: state.items.map((item) =>
-    item.id === action.id ? { ...item, ...updates } : item,
-  ),
-};
-```
+## When to Use useImperativeHandle
+
+- Building reusable form components with imperative APIs
+- Wrapping third-party libraries that need imperative control
+- Exposing animation or media control methods
+
+## Testing
+
+1. Click "Focus Input" — input gains focus
+2. Type text, click "Clear Input" — input is cleared
+3. Type text, click "Get Value" — alert shows current value
+
+## What's Next
+
+Quest 9 introduces `useLayoutEffect` for synchronous DOM measurements before the browser paints.

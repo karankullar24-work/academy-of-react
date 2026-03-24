@@ -1,98 +1,58 @@
-# Quest 4 Solution: Spell Inventory with useReducer
+# Quest 15 Solution: Spell Styles with useInsertionEffect
 
-## Key Concepts Demonstrated
+## Overview
 
-### 1. Reducer Function
+Dynamic CSS rules are injected into the document based on the selected spell type. `useInsertionEffect` ensures styles are inserted before any layout effects read from the DOM, preventing layout thrashing.
 
-A reducer is a pure function that takes the current state and an action, and returns the new state:
+## Key Concepts
+
+### 1. Injecting Styles Dynamically
 
 ```javascript
-function spellReducer(state, action) {
-  switch (action.type) {
-    case "ADD_SPELL":
-      return { ...state, spells: [...state.spells, action.spell] };
-    // ... other cases
-    default:
-      return state;
+useInsertionEffect(() => {
+  let styleEl = document.getElementById("dynamic-spell-styles");
+  if (!styleEl) {
+    styleEl = document.createElement("style");
+    styleEl.id = "dynamic-spell-styles";
+    document.head.appendChild(styleEl);
   }
-}
+
+  styleEl.textContent = `
+    .spell-${spellType} {
+      background: ${colors[spellType]};
+      box-shadow: 0 0 20px ${colors[spellType]};
+    }
+  `;
+}, [spellType]);
 ```
 
-**Rules for reducers:**
+The style tag is created or updated before `useLayoutEffect` or `useEffect` run.
 
-- Must be pure (no side effects)
-- Must return new state object (don't mutate!)
-- Should handle unknown actions by returning current state
+### 2. Effect Ordering
 
-### 2. Dispatching Actions
-
-Instead of calling setters directly, dispatch action objects:
-
-```javascript
-// With useState
-setSpells(spells.filter((s) => s.id !== id));
-
-// With useReducer
-dispatch({ type: "REMOVE_SPELL", id });
+```
+useInsertionEffect  →  useLayoutEffect  →  useEffect
+     (styles)           (measurements)     (side effects)
 ```
 
-Actions describe **what happened**, not how to update the state.
+This ordering guarantees that when `useLayoutEffect` measures the DOM, the correct styles are already applied.
 
-### 3. Immutable Updates
+### 3. When to Use useInsertionEffect
 
-Always return new objects/arrays:
+Almost never. This hook exists for CSS-in-JS library authors (styled-components, Emotion, etc.) who need to inject `<style>` tags at exactly the right time.
 
-```javascript
-// Update one item in array
-case 'UPGRADE_SPELL':
-  return {
-    ...state,
-    spells: state.spells.map(spell =>
-      spell.id === action.id
-        ? { ...spell, power: spell.power + 10 }  // New object
-        : spell
-    )
-  }
-```
+| Hook                   | Purpose                        |
+| ---------------------- | ------------------------------ |
+| `useInsertionEffect`   | Inject CSS before layout reads |
+| `useLayoutEffect`      | Measure/mutate DOM before paint|
+| `useEffect`            | Everything else (data, timers) |
 
-## When to Use useReducer
+## Testing
 
-| useState                      | useReducer                      |
-| ----------------------------- | ------------------------------- |
-| Simple state (number, string) | Complex state (objects, arrays) |
-| 1-2 update patterns           | Many action types               |
-| Quick prototyping             | Predictable, testable updates   |
-| Independent values            | Related state values            |
+1. Click Fire / Ice / Lightning — card color and glow change
+2. Click "Force Re-render" — styles stay correct, no flash
+3. Open console — logs show insertion effect firing
 
-## Benefits of useReducer
+## What's Next
 
-1. **Centralized logic** — All state updates in one place
-2. **Predictable** — Same action always produces same result
-3. **Testable** — Easy to unit test reducers
-4. **Scalable** — Easy to add new action types
-5. **DevTools** — Works with Redux DevTools (with middleware)
-
-## Common Patterns
-
-### Adding to an array
-
-```javascript
-return { ...state, items: [...state.items, newItem] };
-```
-
-### Removing from an array
-
-```javascript
-return { ...state, items: state.items.filter((i) => i.id !== action.id) };
-```
-
-### Updating an item in an array
-
-```javascript
-return {
-  ...state,
-  items: state.items.map((item) =>
-    item.id === action.id ? { ...item, ...updates } : item,
-  ),
-};
-```
+Quest 16 moves to `useRef` for DOM access patterns — auto-focusing inputs and imperative control.

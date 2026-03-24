@@ -1,98 +1,54 @@
-# Quest 4 Solution: Spell Inventory with useReducer
+# Quest 10 Solution: Custom useSpellPower Hook with useDebugValue
 
-## Key Concepts Demonstrated
+## Overview
 
-### 1. Reducer Function
+A custom `useSpellPower` hook that calculates power from a base level and a multiplier. `useDebugValue` makes the computed power visible in React DevTools for easier debugging.
 
-A reducer is a pure function that takes the current state and an action, and returns the new state:
+## Key Concepts
+
+### 1. Custom Hook with useDebugValue
 
 ```javascript
-function spellReducer(state, action) {
-  switch (action.type) {
-    case "ADD_SPELL":
-      return { ...state, spells: [...state.spells, action.spell] };
-    // ... other cases
-    default:
-      return state;
-  }
+function useSpellPower(baseLevel) {
+  const [multiplier, setMultiplier] = useState(1);
+  const power = baseLevel * multiplier;
+
+  useDebugValue(power, (p) => `Power: ${p}`);
+
+  return [power, setMultiplier];
 }
 ```
 
-**Rules for reducers:**
+`useDebugValue` only works inside custom hooks. It displays the value next to the hook name in the React DevTools Components tab.
 
-- Must be pure (no side effects)
-- Must return new state object (don't mutate!)
-- Should handle unknown actions by returning current state
-
-### 2. Dispatching Actions
-
-Instead of calling setters directly, dispatch action objects:
+### 2. Optional Formatter
 
 ```javascript
-// With useState
-setSpells(spells.filter((s) => s.id !== id));
-
-// With useReducer
-dispatch({ type: "REMOVE_SPELL", id });
+useDebugValue(power, (p) => `Power: ${p}`);
 ```
 
-Actions describe **what happened**, not how to update the state.
+The second argument is a formatter function. It's only called when DevTools is open, so expensive formatting doesn't affect production performance.
 
-### 3. Immutable Updates
+### 3. When to Use useDebugValue
 
-Always return new objects/arrays:
+- Inside custom hooks that are reused across a codebase
+- When the hook's internal state isn't obvious from the component tree
+- For library hooks that other developers will consume
 
-```javascript
-// Update one item in array
-case 'UPGRADE_SPELL':
-  return {
-    ...state,
-    spells: state.spells.map(spell =>
-      spell.id === action.id
-        ? { ...spell, power: spell.power + 10 }  // New object
-        : spell
-    )
-  }
-```
+### 4. When NOT to Use It
 
-## When to Use useReducer
+- Inside regular components (it only works in custom hooks)
+- For simple hooks where the state is already visible
+- In production code where DevTools aren't open (it has zero runtime cost, but also zero benefit)
 
-| useState                      | useReducer                      |
-| ----------------------------- | ------------------------------- |
-| Simple state (number, string) | Complex state (objects, arrays) |
-| 1-2 update patterns           | Many action types               |
-| Quick prototyping             | Predictable, testable updates   |
-| Independent values            | Related state values            |
+## Testing
 
-## Benefits of useReducer
+1. Install React DevTools browser extension
+2. Open DevTools → Components tab
+3. Click on a SpellDisplay component
+4. The `useSpellPower` hook shows "Power: 40" (or current value)
+5. Click "Boost" — the debug value updates
 
-1. **Centralized logic** — All state updates in one place
-2. **Predictable** — Same action always produces same result
-3. **Testable** — Easy to unit test reducers
-4. **Scalable** — Easy to add new action types
-5. **DevTools** — Works with Redux DevTools (with middleware)
+## What's Next
 
-## Common Patterns
-
-### Adding to an array
-
-```javascript
-return { ...state, items: [...state.items, newItem] };
-```
-
-### Removing from an array
-
-```javascript
-return { ...state, items: state.items.filter((i) => i.id !== action.id) };
-```
-
-### Updating an item in an array
-
-```javascript
-return {
-  ...state,
-  items: state.items.map((item) =>
-    item.id === action.id ? { ...item, ...updates } : item,
-  ),
-};
-```
+Quest 11 introduces `useId` for generating unique, SSR-safe IDs for accessible forms.

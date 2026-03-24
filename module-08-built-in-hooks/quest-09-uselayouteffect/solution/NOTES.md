@@ -1,98 +1,63 @@
-# Quest 4 Solution: Spell Inventory with useReducer
+# Quest 9 Solution: Spell Card Measurement with useLayoutEffect
 
-## Key Concepts Demonstrated
+## Overview
 
-### 1. Reducer Function
+A spell card that measures its own dimensions synchronously after DOM updates, before the browser paints. This prevents the visual "flash" you'd get with `useEffect`.
 
-A reducer is a pure function that takes the current state and an action, and returns the new state:
+## Key Concepts
+
+### 1. Synchronous Measurement
 
 ```javascript
-function spellReducer(state, action) {
-  switch (action.type) {
-    case "ADD_SPELL":
-      return { ...state, spells: [...state.spells, action.spell] };
-    // ... other cases
-    default:
-      return state;
+useLayoutEffect(() => {
+  if (cardRef.current) {
+    const rect = cardRef.current.getBoundingClientRect();
+    setDimensions({ width: rect.width, height: rect.height });
   }
-}
+}, []);
 ```
 
-**Rules for reducers:**
+`useLayoutEffect` fires after the DOM is updated but before the browser paints. This means measurements are captured and applied in the same frame — no flicker.
 
-- Must be pure (no side effects)
-- Must return new state object (don't mutate!)
-- Should handle unknown actions by returning current state
-
-### 2. Dispatching Actions
-
-Instead of calling setters directly, dispatch action objects:
+### 2. Resize Handling
 
 ```javascript
-// With useState
-setSpells(spells.filter((s) => s.id !== id));
+useLayoutEffect(() => {
+  const measureCard = () => {
+    const rect = cardRef.current.getBoundingClientRect();
+    setDimensions({ width: rect.width, height: rect.height });
+  };
 
-// With useReducer
-dispatch({ type: "REMOVE_SPELL", id });
+  measureCard();
+  window.addEventListener("resize", measureCard);
+  return () => window.removeEventListener("resize", measureCard);
+}, []);
 ```
 
-Actions describe **what happened**, not how to update the state.
+The same cleanup pattern as `useEffect` — return a function to remove the listener.
 
-### 3. Immutable Updates
+### 3. useLayoutEffect vs useEffect
 
-Always return new objects/arrays:
+| `useEffect`                        | `useLayoutEffect`                   |
+| ---------------------------------- | ----------------------------------- |
+| Runs **after** paint               | Runs **before** paint               |
+| Non-blocking (async)               | Blocking (sync)                     |
+| Most side effects                  | DOM measurements, style corrections |
+| Default choice                     | Only when you see flicker           |
 
-```javascript
-// Update one item in array
-case 'UPGRADE_SPELL':
-  return {
-    ...state,
-    spells: state.spells.map(spell =>
-      spell.id === action.id
-        ? { ...spell, power: spell.power + 10 }  // New object
-        : spell
-    )
-  }
-```
+### 4. When to Reach for useLayoutEffect
 
-## When to Use useReducer
+- Measuring element dimensions before display
+- Adjusting scroll position
+- Applying styles based on computed layout
+- Tooltip or popover positioning
 
-| useState                      | useReducer                      |
-| ----------------------------- | ------------------------------- |
-| Simple state (number, string) | Complex state (objects, arrays) |
-| 1-2 update patterns           | Many action types               |
-| Quick prototyping             | Predictable, testable updates   |
-| Independent values            | Related state values            |
+## Testing
 
-## Benefits of useReducer
+1. Card dimensions display immediately (no flash)
+2. Resize the browser window — dimensions update
+3. Click "Add Content" — height adjusts
 
-1. **Centralized logic** — All state updates in one place
-2. **Predictable** — Same action always produces same result
-3. **Testable** — Easy to unit test reducers
-4. **Scalable** — Easy to add new action types
-5. **DevTools** — Works with Redux DevTools (with middleware)
+## What's Next
 
-## Common Patterns
-
-### Adding to an array
-
-```javascript
-return { ...state, items: [...state.items, newItem] };
-```
-
-### Removing from an array
-
-```javascript
-return { ...state, items: state.items.filter((i) => i.id !== action.id) };
-```
-
-### Updating an item in an array
-
-```javascript
-return {
-  ...state,
-  items: state.items.map((item) =>
-    item.id === action.id ? { ...item, ...updates } : item,
-  ),
-};
-```
+Quest 10 introduces `useDebugValue` for labeling custom hooks in React DevTools.
