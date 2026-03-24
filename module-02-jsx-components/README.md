@@ -8,6 +8,7 @@ You've survived the arduous `createElement()` training, but Professor Hookswease
 
 By the end of this module, you will:
 
+- Know what **Node.js**, **npm**, and **pnpm** are and why they sit before Vite in the toolchain
 - Set up and use Vite for React development
 - Understand what JSX is and how it differs from createElement()
 - Write JSX syntax to create React elements
@@ -22,6 +23,7 @@ By the end of this module, you will:
 - Function components
 - Props (properties)
 - Component composition
+- Node.js runtime and package managers (npm, pnpm)
 - Modern build tools (Vite)
 - ES modules and imports
 
@@ -37,7 +39,7 @@ By the end of this module, you will:
 Start with the introduction slides before the demos:
 
 1. Navigate to the `slides/` folder
-2. Run `npm install` then `npm run dev`
+2. Run `npm install` then `npm run dev` (or `pnpm install` / `pnpm dev` if you use pnpm)
 3. Open http://localhost:5173
 4. Use arrow keys to navigate
 
@@ -46,12 +48,43 @@ The slides cover:
 - Why JSX (the pain of createElement)
 - What JSX is and how it works
 - The 4 JSX rules
+- **Node.js** — JavaScript on your computer; dev tools and npm
+- **npm** — installing dependencies and running scripts (`package.json`)
+- **pnpm** — an alternative package manager (same commands, often faster)
 - Introduction to Vite
+- Creating a new project (`npm create vite@latest`) — full optional steps under **Setup Instructions** below
 - Module 2 goals
+
+## Node.js, npm, and pnpm
+
+Before Vite (or any React dev server), you need a **JavaScript runtime** and a way to **install packages** on your machine.
+
+### Node.js
+
+**Node.js** runs JavaScript outside the browser. Your OS doesn't understand `.jsx` files or `import` from `node_modules` by itself — tools like Vite run *on* Node. When you run `npm run dev`, Node executes the Vite CLI.
+
+- Install the **LTS** version from [nodejs.org](https://nodejs.org)
+- After installing, your terminal should recognize `node` and `npm`
+
+### npm
+
+**npm** (Node Package Manager) ships with Node. It reads each project's **`package.json`** (dependency list and script names), downloads packages into **`node_modules/`**, and runs commands like `npm install` and `npm run dev`.
+
+- This README and many demos use **npm** in examples
+- Same ideas everywhere: install dependencies once per project, then use `npm run …` for dev, build, and preview
+
+### pnpm
+
+**pnpm** is another package manager — same job as npm, different implementation. It often installs faster and uses less disk space by sharing one global store across projects.
+
+- Some quests in this repo include a **`pnpm-lock.yaml`**; use **`pnpm install`** and **`pnpm dev`** (or `pnpm run dev`) there, or stick to npm if you prefer — just don't mix lockfiles in the same folder
+- Scaffold with **`pnpm create vite`** the same way you'd use `npm create vite@latest`
+
+The slides introduce these three **before** Vite so the commands in the next section make sense.
 
 ## Welcome to Vite!
 
-Starting in Module 2, we're switching from CDN + Babel to **Vite**, a modern build tool that makes React development fast and enjoyable.
+Starting in Module 2, we're switching from CDN + Babel to **Vite**, a modern build tool that makes React development fast and enjoyable. Vite is installed **as an npm (or pnpm) package** in each project and started with a script from `package.json`.
 
 ### Why the Switch?
 
@@ -100,7 +133,7 @@ Vite (French for "fast") is a modern build tool created by Evan You (creator of 
    npm install
    ```
 
-   This downloads React and Vite (only needed once per project)
+   This downloads React and Vite (only needed once per project). If the folder has `pnpm-lock.yaml` instead, use `pnpm install`.
 
 3. **Start the dev server:**
 
@@ -113,13 +146,35 @@ Vite (French for "fast") is a modern build tool created by Evan You (creator of 
    - Click it or copy/paste into your browser
    - You should see the demo running!
 
-4. **Make changes:**
+5. **Make changes:**
    - Edit files in the `src/` folder
    - Save your changes
    - Watch the browser update instantly!
 
-5. **Stop the server:**
+6. **Stop the server:**
    - Press `Ctrl+C` in the terminal when you're done
+
+### Optional: Create your own Vite + React app
+
+For this module you can stay in the **`demo/`** folder above. If you want a **fresh project** elsewhere on your machine (same tooling as the course):
+
+1. **Scaffold** (pick a folder name instead of `my-app`):
+
+   ```bash
+   npm create vite@latest my-app
+   ```
+
+2. **In the prompts**, choose **React**, then **JavaScript** or **TypeScript**.
+
+3. **Install and run:**
+
+   ```bash
+   cd my-app
+   npm install
+   npm run dev
+   ```
+
+With **pnpm**: `pnpm create vite` (or `pnpm create vite my-app`), then `cd` into the folder, `pnpm install`, and `pnpm dev`.
 
 ### Vite Project Structure
 
@@ -161,6 +216,8 @@ npm run build        # Build for production
 npm run preview      # Preview production build locally
 ```
 
+With **pnpm**, the same scripts work: `pnpm install`, `pnpm dev`, `pnpm build`, `pnpm preview`.
+
 ### Troubleshooting
 
 **Port already in use?**
@@ -182,9 +239,14 @@ npm run preview      # Preview production build locally
 
 **Node.js not installed?**
 
-- Download from [nodejs.org](https://nodejs.org)
+- Download from [nodejs.org](https://nodejs.org) (includes npm)
 - Restart your terminal after installing
-- Verify with `node --version`
+- Verify with `node --version` and `npm --version`
+
+**Optional: pnpm**
+
+- Install once globally: `npm install -g pnpm` (see [pnpm.io](https://pnpm.io/installation) for other methods)
+- Verify with `pnpm --version`
 
 ## Demo Walkthrough
 
@@ -305,7 +367,7 @@ This combines component creation, props, conditional rendering, and calculations
 - Use `{}` to embed JavaScript expressions in JSX
 - JSX makes React code much more readable
 - **Components** should start with a capital letter
-- **npm** manages React and other dependencies
+- **Node.js** runs the dev toolchain; **npm** (or **pnpm**) installs React, Vite, and other dependencies
 - **HMR** provides instant feedback as you code
 
 ---

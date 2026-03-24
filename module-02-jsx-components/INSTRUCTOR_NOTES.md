@@ -224,9 +224,9 @@ Students render a list of components using `.map()` and handle arrays as props.
 
 ### Suggested Flow
 
-1. **Slides: JSX Introduction** (10 min)
+1. **Slides: JSX Introduction** (12–15 min)
    - Run from `slides/` folder: `npm install && npm run dev`
-   - Cover: Why JSX, the 4 rules, Vite intro
+   - Cover: Why JSX, the 4 rules, **Node / npm / pnpm** (toolchain before Vite), then Vite intro
    - Use arrow keys to navigate
 
 2. **Setup + First Look** (15 min)

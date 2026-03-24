@@ -108,6 +108,56 @@ export const slides = [
     },
   },
   {
+    type: "title",
+    content: {
+      title: "The toolchain",
+      subtitle: "Node, npm, pnpm — then Vite",
+      icon: "package",
+    },
+  },
+  {
+    type: "standard",
+    content: {
+      title: "What is Node.js?",
+      points: [
+        "Runs JavaScript on your machine — not only in the browser",
+        "Powers dev servers, build tools, and package managers",
+        "Install from nodejs.org (LTS is fine)",
+        "Comes with npm — you get both in one install",
+        "Check it: node --version",
+      ],
+      icon: "wrench",
+    },
+  },
+  {
+    type: "standard",
+    content: {
+      title: "What is npm?",
+      points: [
+        "Node Package Manager — installs libraries (React, Vite, …)",
+        "package.json lists dependencies and script names",
+        "npm install — download everything into node_modules/",
+        "npm run dev — run a script from package.json",
+        "npm create vite@latest — scaffold a new project",
+      ],
+      icon: "package",
+    },
+  },
+  {
+    type: "standard",
+    content: {
+      title: "What is pnpm?",
+      points: [
+        "Another package manager — same role as npm, different engine",
+        "Often faster; reuses a global store (saves disk space)",
+        "Same ideas: pnpm install, pnpm run dev, pnpm create vite",
+        "Some course folders use pnpm (pnpm-lock.yaml) — that's OK",
+        "Use whichever the README says; both work with Vite and React",
+      ],
+      icon: "layers",
+    },
+  },
+  {
     type: "standard",
     content: {
       title: "Welcome to Vite!",
@@ -126,11 +176,11 @@ export const slides = [
     content: {
       title: "Creating a Vite Project",
       points: [
-        "npm create vite@latest my-app",
+        "npm create vite@latest my-app (or pnpm create vite)",
         "Choose React from the framework list",
         "Choose JavaScript (or TypeScript)",
         "cd my-app",
-        "npm install",
+        "npm install (or pnpm install)",
       ],
       icon: "folder-plus",
     },
@@ -154,8 +204,8 @@ export const slides = [
     content: {
       title: "Vite Commands",
       points: [
-        "npm install — Install dependencies",
-        "npm run dev — Start dev server",
+        "npm install (or pnpm install) — Install dependencies",
+        "npm run dev (or pnpm dev) — Start dev server",
         "Open http://localhost:5173",
         "Edit code → See instant updates!",
         "Ctrl+C — Stop the server",
