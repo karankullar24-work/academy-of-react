@@ -1,98 +1,71 @@
-# Quest 4 Solution: Spell Inventory with useReducer
+# Quest 4 Solution: Simple Spell Manager with useReducer
 
-## Key Concepts Demonstrated
+## Overview
+
+A basic spell list where you can add and remove spells. Introduces the `useReducer` hook as an alternative to `useState` for state driven by discrete actions.
+
+## Key Concepts
 
 ### 1. Reducer Function
-
-A reducer is a pure function that takes the current state and an action, and returns the new state:
 
 ```javascript
 function spellReducer(state, action) {
   switch (action.type) {
     case "ADD_SPELL":
       return { ...state, spells: [...state.spells, action.spell] };
-    // ... other cases
+    case "REMOVE_SPELL":
+      return { ...state, spells: state.spells.filter((s) => s.id !== action.id) };
     default:
       return state;
   }
 }
 ```
 
-**Rules for reducers:**
+A reducer is a pure function: `(state, action) => newState`. It lives outside the component so it has no access to props or other hooks — all data comes through the action.
 
-- Must be pure (no side effects)
-- Must return new state object (don't mutate!)
-- Should handle unknown actions by returning current state
-
-### 2. Dispatching Actions
-
-Instead of calling setters directly, dispatch action objects:
+### 2. Wiring It Up
 
 ```javascript
-// With useState
-setSpells(spells.filter((s) => s.id !== id));
-
-// With useReducer
-dispatch({ type: "REMOVE_SPELL", id });
+const [state, dispatch] = useReducer(spellReducer, { spells: [] });
 ```
 
-Actions describe **what happened**, not how to update the state.
+`useReducer` returns the current state and a `dispatch` function. Calling `dispatch` sends an action to the reducer.
 
-### 3. Immutable Updates
-
-Always return new objects/arrays:
+### 3. Dispatching Actions
 
 ```javascript
-// Update one item in array
-case 'UPGRADE_SPELL':
-  return {
-    ...state,
-    spells: state.spells.map(spell =>
-      spell.id === action.id
-        ? { ...spell, power: spell.power + 10 }  // New object
-        : spell
-    )
-  }
+dispatch({ type: "ADD_SPELL", spell: newSpell });
+dispatch({ type: "REMOVE_SPELL", id: spell.id });
 ```
 
-## When to Use useReducer
+Actions describe **what happened**, not how to update. The reducer decides the new state.
 
-| useState                      | useReducer                      |
-| ----------------------------- | ------------------------------- |
-| Simple state (number, string) | Complex state (objects, arrays) |
-| 1-2 update patterns           | Many action types               |
-| Quick prototyping             | Predictable, testable updates   |
-| Independent values            | Related state values            |
+### 4. Immutable Updates
 
-## Benefits of useReducer
-
-1. **Centralized logic** — All state updates in one place
-2. **Predictable** — Same action always produces same result
-3. **Testable** — Easy to unit test reducers
-4. **Scalable** — Easy to add new action types
-5. **DevTools** — Works with Redux DevTools (with middleware)
-
-## Common Patterns
-
-### Adding to an array
+Always return new objects and arrays — never mutate state:
 
 ```javascript
-return { ...state, items: [...state.items, newItem] };
+// Adding
+[...state.spells, action.spell]
+
+// Removing
+state.spells.filter((s) => s.id !== action.id)
 ```
 
-### Removing from an array
+## When to Use useReducer vs useState
 
-```javascript
-return { ...state, items: state.items.filter((i) => i.id !== action.id) };
-```
+| useState                    | useReducer                    |
+| --------------------------- | ----------------------------- |
+| Simple values               | Structured objects or arrays  |
+| 1–2 update patterns         | Multiple distinct actions     |
+| Quick prototyping           | Predictable, testable updates |
 
-### Updating an item in an array
+## Testing
 
-```javascript
-return {
-  ...state,
-  items: state.items.map((item) =>
-    item.id === action.id ? { ...item, ...updates } : item,
-  ),
-};
-```
+1. Click "Add Spell" — new spell appears in the list
+2. Click "Remove" on a spell — it disappears
+3. Empty state message shows when list is empty
+
+## What's Next
+
+Quest 5 introduces `useCallback` for memoizing functions to prevent unnecessary child re-renders.

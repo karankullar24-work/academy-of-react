@@ -1,98 +1,57 @@
-# Quest 4 Solution: Spell Inventory with useReducer
+# Quest 13 Solution: Spell Power Slider with useDeferredValue
 
-## Key Concepts Demonstrated
+## Overview
 
-### 1. Reducer Function
+A power slider that controls an expensive particle visualization. The slider uses the immediate value for responsiveness, while the heavy render uses a deferred copy that lags behind during rapid changes.
 
-A reducer is a pure function that takes the current state and an action, and returns the new state:
+## Key Concepts
 
-```javascript
-function spellReducer(state, action) {
-  switch (action.type) {
-    case "ADD_SPELL":
-      return { ...state, spells: [...state.spells, action.spell] };
-    // ... other cases
-    default:
-      return state;
-  }
-}
-```
-
-**Rules for reducers:**
-
-- Must be pure (no side effects)
-- Must return new state object (don't mutate!)
-- Should handle unknown actions by returning current state
-
-### 2. Dispatching Actions
-
-Instead of calling setters directly, dispatch action objects:
+### 1. Creating a Deferred Value
 
 ```javascript
-// With useState
-setSpells(spells.filter((s) => s.id !== id));
-
-// With useReducer
-dispatch({ type: "REMOVE_SPELL", id });
+const [power, setPower] = useState(50);
+const deferredPower = useDeferredValue(power);
 ```
 
-Actions describe **what happened**, not how to update the state.
+`deferredPower` eventually equals `power`, but during rapid updates it falls behind so React can keep the UI responsive.
 
-### 3. Immutable Updates
+### 2. Splitting Immediate and Deferred Rendering
 
-Always return new objects/arrays:
-
-```javascript
-// Update one item in array
-case 'UPGRADE_SPELL':
-  return {
-    ...state,
-    spells: state.spells.map(spell =>
-      spell.id === action.id
-        ? { ...spell, power: spell.power + 10 }  // New object
-        : spell
-    )
-  }
+```jsx
+<input value={power} onChange={(e) => setPower(Number(e.target.value))} />
+<SpellParticles power={deferredPower} />
 ```
 
-## When to Use useReducer
+The slider reads `power` directly (always up to date). The expensive component reads `deferredPower` (may lag during fast dragging).
 
-| useState                      | useReducer                      |
-| ----------------------------- | ------------------------------- |
-| Simple state (number, string) | Complex state (objects, arrays) |
-| 1-2 update patterns           | Many action types               |
-| Quick prototyping             | Predictable, testable updates   |
-| Independent values            | Related state values            |
+### 3. Detecting the Lag
 
-## Benefits of useReducer
-
-1. **Centralized logic** — All state updates in one place
-2. **Predictable** — Same action always produces same result
-3. **Testable** — Easy to unit test reducers
-4. **Scalable** — Easy to add new action types
-5. **DevTools** — Works with Redux DevTools (with middleware)
-
-## Common Patterns
-
-### Adding to an array
-
-```javascript
-return { ...state, items: [...state.items, newItem] };
+```jsx
+<p>
+  Deferred Power: {deferredPower}
+  {power !== deferredPower && " (catching up...)"}
+</p>
 ```
 
-### Removing from an array
+When the two values differ, a transition is in progress.
 
-```javascript
-return { ...state, items: state.items.filter((i) => i.id !== action.id) };
-```
+## useDeferredValue vs useTransition
 
-### Updating an item in an array
+| `useTransition`                   | `useDeferredValue`                |
+| --------------------------------- | --------------------------------- |
+| Wraps a **state update**          | Wraps a **value**                 |
+| You control the `setState` call   | You receive a value from outside  |
+| `startTransition(() => setState)` | `useDeferredValue(prop)`          |
 
-```javascript
-return {
-  ...state,
-  items: state.items.map((item) =>
-    item.id === action.id ? { ...item, ...updates } : item,
-  ),
-};
-```
+Use `useDeferredValue` when you don't control the state update — for example, when a value comes through props.
+
+## Testing
+
+1. Drag the slider quickly — it should move smoothly
+2. Watch the deferred value lag behind during fast drags
+3. "catching up..." message appears during transitions
+4. Particles re-render only when deferred value settles
+
+## What's Next
+
+Quest 14 introduces `useSyncExternalStore` for safely subscribing to data sources outside React.

@@ -1,98 +1,56 @@
-# Quest 4 Solution: Spell Inventory with useReducer
+# Quest 6 Solution: Spell Power Calculator with useMemo
 
-## Key Concepts Demonstrated
+## Overview
 
-### 1. Reducer Function
+A spell list with element filters and a total power calculation. Both the filtering and the sum are memoized so they only recalculate when the filter changes, not on every render.
 
-A reducer is a pure function that takes the current state and an action, and returns the new state:
+## Key Concepts
 
-```javascript
-function spellReducer(state, action) {
-  switch (action.type) {
-    case "ADD_SPELL":
-      return { ...state, spells: [...state.spells, action.spell] };
-    // ... other cases
-    default:
-      return state;
-  }
-}
-```
-
-**Rules for reducers:**
-
-- Must be pure (no side effects)
-- Must return new state object (don't mutate!)
-- Should handle unknown actions by returning current state
-
-### 2. Dispatching Actions
-
-Instead of calling setters directly, dispatch action objects:
+### 1. Memoizing a Filtered List
 
 ```javascript
-// With useState
-setSpells(spells.filter((s) => s.id !== id));
-
-// With useReducer
-dispatch({ type: "REMOVE_SPELL", id });
+const filteredSpells = useMemo(() => {
+  console.log("Filtering spells...");
+  return SPELLS.filter(
+    (spell) => filter === "all" || spell.element === filter
+  );
+}, [filter]);
 ```
 
-Actions describe **what happened**, not how to update the state.
+The filter runs only when `filter` changes. Unrelated re-renders (like the "Force Re-render" button) skip this work entirely.
 
-### 3. Immutable Updates
-
-Always return new objects/arrays:
+### 2. Chaining Memoized Values
 
 ```javascript
-// Update one item in array
-case 'UPGRADE_SPELL':
-  return {
-    ...state,
-    spells: state.spells.map(spell =>
-      spell.id === action.id
-        ? { ...spell, power: spell.power + 10 }  // New object
-        : spell
-    )
-  }
+const totalPower = useMemo(() => {
+  console.log("Calculating total power...");
+  return filteredSpells.reduce((sum, spell) => sum + spell.power, 0);
+}, [filteredSpells]);
 ```
 
-## When to Use useReducer
+`totalPower` depends on `filteredSpells`. Because `filteredSpells` is itself memoized, `totalPower` only recalculates when the filtered array actually changes.
 
-| useState                      | useReducer                      |
-| ----------------------------- | ------------------------------- |
-| Simple state (number, string) | Complex state (objects, arrays) |
-| 1-2 update patterns           | Many action types               |
-| Quick prototyping             | Predictable, testable updates   |
-| Independent values            | Related state values            |
+### 3. When It Matters
 
-## Benefits of useReducer
+`useMemo` prevents redundant work. The console logs make it visible:
 
-1. **Centralized logic** — All state updates in one place
-2. **Predictable** — Same action always produces same result
-3. **Testable** — Easy to unit test reducers
-4. **Scalable** — Easy to add new action types
-5. **DevTools** — Works with Redux DevTools (with middleware)
+- Change the filter → both logs fire (expected)
+- Click "Force Re-render" → neither log fires (memoized)
 
-## Common Patterns
+## useMemo vs useCallback
 
-### Adding to an array
+| `useMemo`                   | `useCallback`                   |
+| --------------------------- | ------------------------------- |
+| Memoizes a **value**        | Memoizes a **function**         |
+| `useMemo(() => compute())` | `useCallback(() => doThing())`  |
+| Returns the result          | Returns the function itself     |
 
-```javascript
-return { ...state, items: [...state.items, newItem] };
-```
+## Testing
 
-### Removing from an array
+1. Click filter buttons — spell list and total update
+2. Click "Force Re-render" — no console logs, no recalculation
+3. Open console to verify memoization is working
 
-```javascript
-return { ...state, items: state.items.filter((i) => i.id !== action.id) };
-```
+## What's Next
 
-### Updating an item in an array
-
-```javascript
-return {
-  ...state,
-  items: state.items.map((item) =>
-    item.id === action.id ? { ...item, ...updates } : item,
-  ),
-};
-```
+Quest 7 introduces `useRef` for direct DOM access without re-renders.

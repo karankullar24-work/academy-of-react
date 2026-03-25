@@ -1,98 +1,56 @@
-# Quest 4 Solution: Spell Inventory with useReducer
+# Quest 1 Solution: Spell Counter with useState
 
-## Key Concepts Demonstrated
+## Overview
 
-### 1. Reducer Function
+A simple spell counter that tracks how many spells have been cast, with milestone messages at different thresholds. Demonstrates the core `useState` hook for managing local component state.
 
-A reducer is a pure function that takes the current state and an action, and returns the new state:
+## Key Concepts
+
+### 1. Declaring State
 
 ```javascript
-function spellReducer(state, action) {
-  switch (action.type) {
-    case "ADD_SPELL":
-      return { ...state, spells: [...state.spells, action.spell] };
-    // ... other cases
-    default:
-      return state;
-  }
-}
+const [spellCount, setSpellCount] = useState(0);
 ```
 
-**Rules for reducers:**
+`useState` returns a pair: the current value and a setter function. The argument (`0`) is the initial value, used only on the first render.
 
-- Must be pure (no side effects)
-- Must return new state object (don't mutate!)
-- Should handle unknown actions by returning current state
-
-### 2. Dispatching Actions
-
-Instead of calling setters directly, dispatch action objects:
+### 2. Updating State
 
 ```javascript
-// With useState
-setSpells(spells.filter((s) => s.id !== id));
-
-// With useReducer
-dispatch({ type: "REMOVE_SPELL", id });
-```
-
-Actions describe **what happened**, not how to update the state.
-
-### 3. Immutable Updates
-
-Always return new objects/arrays:
-
-```javascript
-// Update one item in array
-case 'UPGRADE_SPELL':
-  return {
-    ...state,
-    spells: state.spells.map(spell =>
-      spell.id === action.id
-        ? { ...spell, power: spell.power + 10 }  // New object
-        : spell
-    )
-  }
-```
-
-## When to Use useReducer
-
-| useState                      | useReducer                      |
-| ----------------------------- | ------------------------------- |
-| Simple state (number, string) | Complex state (objects, arrays) |
-| 1-2 update patterns           | Many action types               |
-| Quick prototyping             | Predictable, testable updates   |
-| Independent values            | Related state values            |
-
-## Benefits of useReducer
-
-1. **Centralized logic** — All state updates in one place
-2. **Predictable** — Same action always produces same result
-3. **Testable** — Easy to unit test reducers
-4. **Scalable** — Easy to add new action types
-5. **DevTools** — Works with Redux DevTools (with middleware)
-
-## Common Patterns
-
-### Adding to an array
-
-```javascript
-return { ...state, items: [...state.items, newItem] };
-```
-
-### Removing from an array
-
-```javascript
-return { ...state, items: state.items.filter((i) => i.id !== action.id) };
-```
-
-### Updating an item in an array
-
-```javascript
-return {
-  ...state,
-  items: state.items.map((item) =>
-    item.id === action.id ? { ...item, ...updates } : item,
-  ),
+const castSpell = () => {
+  setSpellCount(spellCount + 1);
 };
 ```
+
+Calling `setSpellCount` triggers a re-render with the new value. React replaces the old state — it never mutates it.
+
+### 3. Conditional Rendering from State
+
+```javascript
+const getMilestoneMessage = () => {
+  if (spellCount >= 20) return "Legendary Wizard! 🌟";
+  if (spellCount >= 10) return "Spell Master! ⚡";
+  if (spellCount >= 5) return "Getting the hang of it! 🔥";
+  return "";
+};
+```
+
+Derive display values from state. No need for a second state variable — compute from what you already have.
+
+## When to Use useState
+
+| Good Fit                         | Consider Something Else              |
+| -------------------------------- | ------------------------------------ |
+| Simple values (number, string)   | Complex objects with many actions    |
+| One or two update patterns       | Many interrelated state values       |
+| Component-local state            | State shared across distant siblings |
+
+## Testing
+
+1. Click "Cast Spell" — count increments
+2. Reach 5, 10, 20 — milestone messages appear
+3. Click "Reset" — count returns to 0
+
+## What's Next
+
+Quest 2 introduces `useEffect` for side effects like timers and cleanup.

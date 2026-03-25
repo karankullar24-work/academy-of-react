@@ -1,98 +1,61 @@
-# Quest 4 Solution: Spell Inventory with useReducer
+# Quest 2 Solution: Mana Regeneration with useEffect
 
-## Key Concepts Demonstrated
+## Overview
 
-### 1. Reducer Function
+A mana bar that automatically regenerates over time using `setInterval`, with proper cleanup when the component unmounts. Demonstrates `useEffect` for managing side effects.
 
-A reducer is a pure function that takes the current state and an action, and returns the new state:
+## Key Concepts
+
+### 1. Setting Up a Side Effect
 
 ```javascript
-function spellReducer(state, action) {
-  switch (action.type) {
-    case "ADD_SPELL":
-      return { ...state, spells: [...state.spells, action.spell] };
-    // ... other cases
-    default:
-      return state;
-  }
-}
+useEffect(() => {
+  const intervalId = setInterval(() => {
+    setMana((currentMana) => {
+      if (currentMana >= 100) return 100;
+      return Math.min(currentMana + 5, 100);
+    });
+  }, 1000);
+
+  return () => clearInterval(intervalId);
+}, []);
 ```
 
-**Rules for reducers:**
+The effect runs after the first render. The empty dependency array `[]` means it runs once on mount and cleans up on unmount.
 
-- Must be pure (no side effects)
-- Must return new state object (don't mutate!)
-- Should handle unknown actions by returning current state
-
-### 2. Dispatching Actions
-
-Instead of calling setters directly, dispatch action objects:
+### 2. Cleanup Functions
 
 ```javascript
-// With useState
-setSpells(spells.filter((s) => s.id !== id));
-
-// With useReducer
-dispatch({ type: "REMOVE_SPELL", id });
-```
-
-Actions describe **what happened**, not how to update the state.
-
-### 3. Immutable Updates
-
-Always return new objects/arrays:
-
-```javascript
-// Update one item in array
-case 'UPGRADE_SPELL':
-  return {
-    ...state,
-    spells: state.spells.map(spell =>
-      spell.id === action.id
-        ? { ...spell, power: spell.power + 10 }  // New object
-        : spell
-    )
-  }
-```
-
-## When to Use useReducer
-
-| useState                      | useReducer                      |
-| ----------------------------- | ------------------------------- |
-| Simple state (number, string) | Complex state (objects, arrays) |
-| 1-2 update patterns           | Many action types               |
-| Quick prototyping             | Predictable, testable updates   |
-| Independent values            | Related state values            |
-
-## Benefits of useReducer
-
-1. **Centralized logic** — All state updates in one place
-2. **Predictable** — Same action always produces same result
-3. **Testable** — Easy to unit test reducers
-4. **Scalable** — Easy to add new action types
-5. **DevTools** — Works with Redux DevTools (with middleware)
-
-## Common Patterns
-
-### Adding to an array
-
-```javascript
-return { ...state, items: [...state.items, newItem] };
-```
-
-### Removing from an array
-
-```javascript
-return { ...state, items: state.items.filter((i) => i.id !== action.id) };
-```
-
-### Updating an item in an array
-
-```javascript
-return {
-  ...state,
-  items: state.items.map((item) =>
-    item.id === action.id ? { ...item, ...updates } : item,
-  ),
+return () => {
+  clearInterval(intervalId);
 };
 ```
+
+Returning a function from `useEffect` tells React to run it when the component unmounts (or before re-running the effect). This prevents memory leaks from orphaned intervals.
+
+### 3. Functional State Updates
+
+```javascript
+setMana((currentMana) => Math.min(currentMana + 5, 100));
+```
+
+Using the function form of `setState` ensures you always work with the latest value, even inside a stale closure like a `setInterval` callback.
+
+### 4. Dependency Arrays
+
+| Pattern              | Runs When                        |
+| -------------------- | -------------------------------- |
+| `useEffect(fn)`      | Every render                     |
+| `useEffect(fn, [])`  | Mount only (cleanup on unmount)  |
+| `useEffect(fn, [a])` | Mount + whenever `a` changes     |
+
+## Testing
+
+1. Watch the mana bar fill automatically (5% per second)
+2. Click "Cast Spell" — mana drops by 20%
+3. Mana should cap at 100% and never exceed it
+4. Button disabled when mana is below 20%
+
+## What's Next
+
+Quest 3 introduces `useContext` for sharing state across components without prop drilling.

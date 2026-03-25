@@ -1,98 +1,59 @@
-# Quest 4 Solution: Spell Inventory with useReducer
+# Quest 12 Solution: Spell Search with useTransition
 
-## Key Concepts Demonstrated
+## Overview
 
-### 1. Reducer Function
+A search input that filters 5,000 spells. The input update is urgent (stays responsive), while the list filtering is wrapped in `startTransition` so it can be interrupted without blocking typing.
 
-A reducer is a pure function that takes the current state and an action, and returns the new state:
+## Key Concepts
 
-```javascript
-function spellReducer(state, action) {
-  switch (action.type) {
-    case "ADD_SPELL":
-      return { ...state, spells: [...state.spells, action.spell] };
-    // ... other cases
-    default:
-      return state;
-  }
-}
-```
-
-**Rules for reducers:**
-
-- Must be pure (no side effects)
-- Must return new state object (don't mutate!)
-- Should handle unknown actions by returning current state
-
-### 2. Dispatching Actions
-
-Instead of calling setters directly, dispatch action objects:
+### 1. Separating Urgent and Non-Urgent Updates
 
 ```javascript
-// With useState
-setSpells(spells.filter((s) => s.id !== id));
+const [isPending, startTransition] = useTransition();
 
-// With useReducer
-dispatch({ type: "REMOVE_SPELL", id });
-```
+const handleSearch = (e) => {
+  const value = e.target.value;
+  setSearchTerm(value);          // Urgent — input stays responsive
 
-Actions describe **what happened**, not how to update the state.
-
-### 3. Immutable Updates
-
-Always return new objects/arrays:
-
-```javascript
-// Update one item in array
-case 'UPGRADE_SPELL':
-  return {
-    ...state,
-    spells: state.spells.map(spell =>
-      spell.id === action.id
-        ? { ...spell, power: spell.power + 10 }  // New object
-        : spell
-    )
-  }
-```
-
-## When to Use useReducer
-
-| useState                      | useReducer                      |
-| ----------------------------- | ------------------------------- |
-| Simple state (number, string) | Complex state (objects, arrays) |
-| 1-2 update patterns           | Many action types               |
-| Quick prototyping             | Predictable, testable updates   |
-| Independent values            | Related state values            |
-
-## Benefits of useReducer
-
-1. **Centralized logic** — All state updates in one place
-2. **Predictable** — Same action always produces same result
-3. **Testable** — Easy to unit test reducers
-4. **Scalable** — Easy to add new action types
-5. **DevTools** — Works with Redux DevTools (with middleware)
-
-## Common Patterns
-
-### Adding to an array
-
-```javascript
-return { ...state, items: [...state.items, newItem] };
-```
-
-### Removing from an array
-
-```javascript
-return { ...state, items: state.items.filter((i) => i.id !== action.id) };
-```
-
-### Updating an item in an array
-
-```javascript
-return {
-  ...state,
-  items: state.items.map((item) =>
-    item.id === action.id ? { ...item, ...updates } : item,
-  ),
+  startTransition(() => {
+    const filtered = ALL_SPELLS.filter((spell) =>
+      spell.name.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredSpells(filtered);  // Non-urgent — can be interrupted
+  });
 };
 ```
+
+React prioritizes the `setSearchTerm` update. The `setFilteredSpells` inside `startTransition` yields to more urgent work (like the next keystroke).
+
+### 2. Pending State
+
+```jsx
+{isPending && <div className="loading">Searching...</div>}
+```
+
+`isPending` is `true` while the transition is in progress. Use it to show a loading indicator without blocking the input.
+
+### 3. How It Differs from Debouncing
+
+Debouncing delays the update by a fixed time. `useTransition` lets React schedule it intelligently — it starts immediately but yields when higher-priority work arrives.
+
+## When to Use useTransition
+
+| Scenario                        | Use useTransition? |
+| ------------------------------- | ------------------ |
+| Filtering a large list          | Yes                |
+| Switching tabs with heavy content | Yes              |
+| Simple counter increment        | No — already fast  |
+| Network requests                | No — use Suspense  |
+
+## Testing
+
+1. Type quickly in the search box — input should never lag
+2. "Searching..." indicator appears during filtering
+3. Results update after typing pauses
+4. Try with 5,000 items — still smooth
+
+## What's Next
+
+Quest 13 introduces `useDeferredValue`, which solves a similar problem from the value side rather than the update side.
